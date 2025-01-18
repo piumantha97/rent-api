@@ -3,9 +3,9 @@ const mongoose = require('mongoose');
 const propertyRentSchema = new mongoose.Schema({
   placeCode: { type: String, required: true },
 
-  businessNameName: { type: String, required: true },
+  businessName: { type: String, required: true },
   fullName: { type: String, required: true },
-  telephone: { type: String, required: true, match: /^[0-9]{10}$/ },
+//   telephone: { type: String, required: true, match: /^[0-9]{10}$/ },
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },
   keyMoney: { type: Number, required: true, min: 0 },
