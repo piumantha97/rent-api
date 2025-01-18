@@ -7,7 +7,7 @@ const formDAO = {
   },
 
   async getAll() {
-    return await PropertySubmission.find();
+   return await PropertySubmission.find().sort({ endDate: -1 });
   },
 
   async getById(id) {
