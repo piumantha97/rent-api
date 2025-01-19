@@ -29,7 +29,7 @@ router.post('/', async (req, res) => {
 // Get all agreements
 router.get('/', async (req, res) => {
   try {
-    const agreements = await agreementDAO.getAll();
+    const agreements = await agreementDAO.getAllAgreements();
     res.status(200).json(agreements);
   } catch (err) {
     console.error('Error fetching agreements:', err.message);
