@@ -23,6 +23,11 @@ const formDAO = {
 
   async deleteById(id) {
     return await PropertySubmission.findByIdAndDelete(id);
+  },
+
+
+  async getUniqueBusinessNames() {
+    return await PropertySubmission.distinct('businessName'); // Fetch unique business names
   }
 };
 

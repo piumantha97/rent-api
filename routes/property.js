@@ -62,4 +62,16 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+
+// Get all unique business names
+router.get('/businesses', async (req, res) => {
+  try {
+    const businessNames = await propertyRentDAO.getUniqueBusinessNames();
+    res.status(200).json(businessNames);
+  } catch (err) {
+    console.error('Error fetching business names:', err.message);
+    res.status(500).json({ error: 'Failed to fetch business names' });
+  }
+});
+
 module.exports = router;
