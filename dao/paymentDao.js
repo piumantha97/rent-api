@@ -26,39 +26,52 @@ const paymentDAO = {
     return await Business.find().sort({ name: 1 }); // Sort businesses alphabetically
   },
 
-// Fetch all payments with populated fields
-// async fetchAllPayments() {
-//   try {
-
-//     const payments = await Payment.find()
-//       .populate({
-//         path: 'businessId', // Assuming businessId is a reference
-//         select: 'businessName assignedPlace', // Select only required fields
-//         populate: { path: 'assignedPlace', select: 'building floor partition' },
-//       });
-
-//     // Log the payments data to the console
-//     console.log("Fetched Payments:", JSON.stringify(payments, null, 2));
-
-//     return payments;
-//   } catch (error) {
-//     console.error("Error fetching payments:", error.message);
-//     throw error; // Re-throw the error to handle it at a higher level
-//   }
-// }
-
 async fetchAllPayments() {
   try {
-    const payments = await Payment.find()
-      .populate({
-        path: 'businessId',
-        select: 'businessName assignedPlace', // Select businessName and assignedPlace
-        populate: {
-          path: 'assignedPlace',
-          select: 'building floor partition', // Nested populate for assignedPlace
+    const payments = await Payment.aggregate([
+      {
+        $lookup: {
+          from: 'businesses', // Collection name for businesses
+          localField: 'businessId',
+          foreignField: '_id',
+          as: 'businessDetails',
         },
-      })
-      .populate('place', 'building floor partition'); // Populate place separately if needed
+      },
+      {
+        $unwind: {
+          path: '$businessDetails',
+          preserveNullAndEmptyArrays: true, // Include payments even if no business is linked
+        },
+      },
+      {
+        $lookup: {
+          from: 'places', // Collection name for places
+          localField: 'businessDetails.assignedPlace',
+          foreignField: '_id',
+          as: 'placeDetails',
+        },
+      },
+      {
+        $unwind: {
+          path: '$placeDetails',
+          preserveNullAndEmptyArrays: true, // Include businesses even if no place is linked
+        },
+      },
+      {
+        $project: {
+          paymentDate: 1,
+          paymentAmount: 1,
+          paymentMethod: 1,
+          month: 1,
+          remarks: 1,
+          'businessDetails.businessName': 1,
+          'businessDetails.contactNumber': 1,
+          'placeDetails.building': 1,
+          'placeDetails.floor': 1,
+          'placeDetails.partition': 1,
+        },
+      },
+    ]);
 
     console.log('Fetched Payments:', JSON.stringify(payments, null, 2));
     return payments;
@@ -67,7 +80,6 @@ async fetchAllPayments() {
     throw error;
   }
 }
-
 
 };
 
