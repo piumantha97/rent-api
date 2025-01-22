@@ -38,7 +38,8 @@ const paymentSchema = new mongoose.Schema({
     enum: ['Cash', 'Bank Transfer', 'Credit Card', 'Other'],
   },
   businessId: { type: mongoose.Schema.Types.ObjectId, ref: 'Business', required: false }, // Reference Business
-  place: { type: mongoose.Schema.Types.ObjectId, ref: 'Place', required: false }, // Reference Place
+  place: { type: String, required: false }, // Change to String
+
   remarks: { type: String },
   month: { type: String },
 });
