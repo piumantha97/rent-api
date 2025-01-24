@@ -57,6 +57,9 @@ const agreementDAO = {
               'placeDetails.partition': 1,
             },
           },
+          {
+            $sort:{endDate:1}
+          }
         ]);
       },
       
