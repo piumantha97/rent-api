@@ -1,5 +1,5 @@
 const express = require('express');
-const paymentDAO = require('../dao/paymentDAO');
+const paymentDAO = require('../dao/paymentDao');
 
 const router = express.Router();
 
