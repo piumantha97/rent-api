@@ -8,6 +8,7 @@ const paymentRoutes = require('./routes/payment');
 const placeRoutes = require('./routes/placeRoutes');
 const businessRoutes = require('./routes/businessRoutes');
 const agreementRoutes = require('./routes/agreementRoutes');
+const reportRoutes = require('./routes/reportRoutes');
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use('/api/places', placeRoutes);
 app.use('/api/businesses', businessRoutes);
 // Use agreement routes
 app.use('/api/agreements', agreementRoutes);
+app.use('/api/reports', reportRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 5000;

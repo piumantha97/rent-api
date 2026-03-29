@@ -1,9 +1,8 @@
 const express = require('express');
-const placeDAO = require('../dao/placeDAO'); // Import Place DAO
+const placeDAO = require('../dao/placeDAO');
 
 const router = express.Router();
 
-// POST: Add a new place
 router.post('/', async (req, res) => {
   try {
     const {
@@ -13,28 +12,36 @@ router.post('/', async (req, res) => {
       currentMeter,
       waterMeter,
       squareFeet,
-      address
+      address,
+      status
     } = req.body;
+
+    const unitCode = `${building}-${floor}${partition ? `-${partition}` : ''}`;
 
     const placeData = {
       building,
       floor,
-      partition: partition || null, // Null if partition is not provided
+      partition: partition || null,
+      unitCode,
       currentMeter,
       waterMeter,
       squareFeet,
-      address: address || '' // Empty string if address is not provided
+      address: address || '',
+      status: status || 'vacant'
     };
 
     const savedPlace = await placeDAO.create(placeData);
-    res.status(201).json({ message: 'Place added successfully', place: savedPlace });
+
+    res.status(201).json({
+      message: 'Place added successfully',
+      place: savedPlace
+    });
   } catch (err) {
     console.error('Error saving place:', err.message);
     res.status(500).json({ error: 'Failed to add place' });
   }
 });
 
-// GET: Fetch all places
 router.get('/', async (req, res) => {
   try {
     const places = await placeDAO.getAll();
@@ -45,7 +52,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET: Fetch a single place by ID
 router.get('/:id', async (req, res) => {
   try {
     const place = await placeDAO.getById(req.params.id);
@@ -59,21 +65,22 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// PUT: Update a place by ID
 router.put('/:id', async (req, res) => {
   try {
     const updatedPlace = await placeDAO.updateById(req.params.id, req.body);
     if (!updatedPlace) {
       return res.status(404).json({ message: 'Place not found' });
     }
-    res.status(200).json({ message: 'Place updated successfully', place: updatedPlace });
+    res.status(200).json({
+      message: 'Place updated successfully',
+      place: updatedPlace
+    });
   } catch (err) {
     console.error('Error updating place:', err.message);
     res.status(500).json({ error: 'Failed to update place' });
   }
 });
 
-// DELETE: Remove a place by ID
 router.delete('/:id', async (req, res) => {
   try {
     const deletedPlace = await placeDAO.deleteById(req.params.id);

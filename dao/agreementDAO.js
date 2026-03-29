@@ -7,78 +7,84 @@ const agreementDAO = {
     return await agreement.save();
   },
 
-  // Get all agreements with populated business details
+  // Get all agreements with populate
   async getAll() {
-    return await Agreement.find().populate('businessId');
+    return await Agreement.find()
+      .populate('businessId')
+      .populate('placeId');
   },
+
+  // Get all agreements with business + place details
   async getAllAgreements() {
-
-        return await Agreement.aggregate([
-          {
-            $lookup: {
-              from: 'businesses', // Collection name for businesses
-              localField: 'businessId',
-              foreignField: '_id',
-              as: 'businessDetails',
-            },
-          },
-          {
-            $unwind: {
-              path: '$businessDetails',
-              preserveNullAndEmptyArrays: true, // Keeps agreements even if no business is found
-            },
-          },
-          {
-            $lookup: {
-              from: 'places', // Collection name for places
-              localField: 'businessDetails.assignedPlace',
-              foreignField: '_id',
-              as: 'placeDetails',
-            },
-          },
-          {
-            $unwind: {
-              path: '$placeDetails',
-              preserveNullAndEmptyArrays: true, // Keeps businesses even if no place is found
-            },
-          },
-          {
-            $project: {
-              agreementType: 1,
-              startDate: 1,
-              endDate: 1,
-              monthlyRent: 1,
-              keyMoney: 1,
-              businessId: 1,
-              'businessDetails.businessName': 1,
-              'businessDetails.contactNumber': 1,
-              'placeDetails.building': 1,
-              'placeDetails.floor': 1,
-              'placeDetails.partition': 1,
-            },
-          },
-          {
-            $sort:{endDate:1}
-          }
-        ]);
+    return await Agreement.aggregate([
+      {
+        $lookup: {
+          from: 'businesses',
+          localField: 'businessId',
+          foreignField: '_id',
+          as: 'businessDetails',
+        },
       },
-      
-
-
-  // Get an agreement by ID with populated business details
-  async getById(id) {
-    return await Agreement.findById(id).populate('businessId');
+      {
+        $unwind: {
+          path: '$businessDetails',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: 'places',
+          localField: 'placeId',
+          foreignField: '_id',
+          as: 'placeDetails',
+        },
+      },
+      {
+        $unwind: {
+          path: '$placeDetails',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          agreementType: 1,
+          startDate: 1,
+          endDate: 1,
+          monthlyRent: 1,
+          keyMoney: 1,
+          businessId: 1,
+          placeId: 1,
+          'businessDetails.businessName': 1,
+          'businessDetails.personName': 1,
+          'businessDetails.contactNumber': 1,
+          'placeDetails.building': 1,
+          'placeDetails.floor': 1,
+          'placeDetails.partition': 1,
+          'placeDetails.unitCode': 1,
+        },
+      },
+      {
+        $sort: { endDate: 1 },
+      },
+    ]);
   },
 
-  // Update an agreement by ID
+  // Get agreement by ID
+  async getById(id) {
+    return await Agreement.findById(id)
+      .populate('businessId')
+      .populate('placeId');
+  },
+
+  // Update agreement
   async updateById(id, data) {
     return await Agreement.findByIdAndUpdate(id, data, { new: true });
   },
 
-  // Delete an agreement by ID
+  // Delete agreement
   async deleteById(id) {
     return await Agreement.findByIdAndDelete(id);
-  }
+  },
 };
 
 module.exports = agreementDAO;
