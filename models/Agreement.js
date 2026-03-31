@@ -19,7 +19,12 @@ const agreementSchema = new mongoose.Schema({
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },
   keyMoney: { type: Number, default: null },
-  monthlyRent: { type: Number, required: true }
+  monthlyRent: { type: Number, required: true },
+  status: {
+  type: String,
+  enum: ['active', 'expired', 'terminated'],
+  default: 'active'
+}
 });
 
 module.exports = mongoose.model('Agreement', agreementSchema);

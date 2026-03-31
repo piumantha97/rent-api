@@ -49,6 +49,16 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.get('/active/list', async (req, res) => {
+  try {
+    const agreements = await agreementDAO.getActiveAgreements();
+    res.status(200).json(agreements);
+  } catch (err) {
+    console.error('Error fetching active agreements:', err.message);
+    res.status(500).json({ error: 'Failed to fetch active agreements' });
+  }
+});
+
 // GET: Fetch one agreement by ID
 router.get('/:id', async (req, res) => {
   try {

@@ -14,6 +14,48 @@ const agreementDAO = {
       .populate('placeId');
   },
 
+  async getActiveAgreements() {
+  const today = new Date();
+
+  return await Agreement.aggregate([
+    {
+      $match: {
+        endDate: { $gte: today }
+      }
+    },
+    {
+      $lookup: {
+        from: 'businesses',
+        localField: 'businessId',
+        foreignField: '_id',
+        as: 'businessDetails',
+      },
+    },
+    {
+      $unwind: {
+        path: '$businessDetails',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'places',
+        localField: 'placeId',
+        foreignField: '_id',
+        as: 'placeDetails',
+      },
+    },
+    {
+      $unwind: {
+        path: '$placeDetails',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $sort: { endDate: -1, startDate: -1 }
+    }
+  ]);
+},
   // Get all agreements with business + place details
   async getAllAgreements() {
     return await Agreement.aggregate([
