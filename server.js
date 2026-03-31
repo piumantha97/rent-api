@@ -10,6 +10,8 @@ const businessRoutes = require('./routes/businessRoutes');
 const agreementRoutes = require('./routes/agreementRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 const incomeRoutes = require('./routes/incomeRoutes');
+const authRoutes = require('./routes/authRoutes');
+
 
 const app = express();
 
@@ -35,6 +37,7 @@ app.use('/api/businesses', businessRoutes);
 app.use('/api/agreements', agreementRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/income', incomeRoutes);
+app.use('/api/auth', authRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 5000;
